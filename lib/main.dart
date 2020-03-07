@@ -7,7 +7,6 @@ import 'package:census_app/ui/screens/signInScreen.dart';
 import 'package:census_app/ui/screens/signUpScreen.dart';
 import 'package:census_app/ui/screens/mainScreen.dart';
 import 'package:census_app/ui/screens/addCitizenScreen.dart';
-import 'package:census_app/ui/screens/personScreen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,9 +23,6 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-
-
-
     return MaterialApp(
       title: 'Ghana Statistical Service',
       debugShowCheckedModeBanner: false,
@@ -36,8 +32,9 @@ class MyApp extends StatelessWidget {
         '/signin': (BuildContext context) => new SignInScreen(),
         '/signup': (BuildContext context) => new SignUpScreen(),
         '/main': (BuildContext context) => new MainScreen(prefs: prefs),
-        '/addcitizen': (BuildContext context) => new AddCitizen(title: "Add New Citizen",),
-//        '/person': (BuildContext context) => new PersonScreen(title: "Add New Citizen",),
+        '/addcitizen': (BuildContext context) => new AddCitizen(prefs: prefs,
+              title: "Add New Individual",
+            ),
       },
       theme: ThemeData(
         primaryColor: Colors.white,

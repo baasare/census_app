@@ -30,47 +30,29 @@ class PeopleListScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           return Card(
               child: ListTile(
-                title: Text(data[index].fullName,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 20,
-                    )),
-                subtitle: Text("Gender: " + data[index].gender +  ", Age: " + (data[index].age).toString()),
-                leading: Icon(Icons.person,
-                  color: Colors.blue[500],
+            title: Text(data[index].fullName,
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 20,
+                )),
+            subtitle: Text("Gender: " +
+                data[index].gender +
+                ", Age: " +
+                (data[index].age).toString()),
+            leading: Icon(
+              Icons.person,
+              color: Colors.blue[500],
+            ),
+            trailing: Icon(Icons.keyboard_arrow_right),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PersonScreen(person: data[index]),
                 ),
-                trailing: Icon(Icons.keyboard_arrow_right),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PersonScreen(person: data[index]),
-                    ),
-                  );
-                  // do something
-                },
-              )
-//            child: _tile(data[index].fullName, data[index].gender, data[index].age, Icons.perm_identity),
-          );
+              );
+            },
+          ));
         });
   }
-
-  ListTile _tile(String fullName, String gender, int age, IconData icon, BuildContext context) =>
-      ListTile(
-        title: Text(fullName,
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: 20,
-            )),
-        subtitle: Text("Gender: $gender, Age: $age"),
-        leading: Icon(
-          icon,
-          color: Colors.blue[500],
-        ),
-        trailing: Icon(Icons.keyboard_arrow_right),
-        onTap: () {
-
-          // do something
-        },
-      );
 }

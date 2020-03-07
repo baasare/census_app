@@ -3,14 +3,14 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import "package:census_app/models/person.dart";
-import 'package:census_app/business/validator.dart';
 import 'package:census_app/services/peopleService.dart';
 import 'package:census_app/ui/widgets/custom_flat_button.dart';
 import 'package:census_app/ui/widgets/custom_alert_dialog.dart';
 
 class AddCitizen extends StatefulWidget {
-  AddCitizen({Key key, this.title}) : super(key: key);
+  AddCitizen({Key key, this.title, this.prefs}) : super(key: key);
   final String title;
+  final SharedPreferences prefs;
 
   @override
   _AddCitizenState createState() => new _AddCitizenState();
@@ -28,7 +28,6 @@ class _AddCitizenState extends State<AddCitizen> {
   final TextEditingController _locality = new TextEditingController();
   final TextEditingController _regionInput = new TextEditingController();
 
-  bool _blackVisible = false;
   VoidCallback onBackPress;
 
   List<String> _regions = <String>[
@@ -59,10 +58,12 @@ class _AddCitizenState extends State<AddCitizen> {
   String _gender = '';
   String _region = '';
 
+  Future myToken;
+
+
   @override
   void initState() {
     super.initState();
-
     onBackPress = () {
       Navigator.of(context).pop();
     };
@@ -214,11 +215,11 @@ class _AddCitizenState extends State<AddCitizen> {
                         onPressed: () {
                           _addPerson(
                               fullName: _fullName.text,
-                              gender: _genderInput.text,
+                              gender: _gender,
                               age: int.parse(_age.text),
                               nationality: _nationality.text,
                               ethnicity: _ethnicity.text,
-                              region: _regionInput.text,
+                              region: _region,
                               locality: _locality.text,
                               religion: _religion.text,
                               context: context);
@@ -245,48 +246,78 @@ class _AddCitizenState extends State<AddCitizen> {
       BuildContext context}) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     String userID = pref.getString("userID");
-    if (Validator.validateText(region)) {
-      print("hi");
-    }
-    if (Validator.validateText(fullName) &&
-        Validator.validateAge(age) &&
-        Validator.validateText(nationality) &&
-        Validator.validateText(ethnicity) &&
-        Validator.validateText(religion) &&
-        Validator.validateText(locality)) {
-      try {
+    String token = pref.getString("token");
 
-        await PeopleAPI.addPerson(new Person(
-                fullName: fullName,
-                gender: gender,
-                age: age,
-                nationality: nationality,
-                ethnicity: ethnicity,
-                religion: religion,
-                locality: locality,
-                region: region,
-                enumerator: int.parse(userID)))
-            .then((response) {
-          print(fullName);
-          if (response.statusCode == 201) {
-            _showErrorAlert(
-              title: "Individual Added Successfully",
-              content: "You'll be redirected home",
-              path: "main",
-            );
-          }
-        });
-      } catch (e) {
-            _showErrorAlert(
-              title: "Error",
-              content: "Individual was not added",
-              path: "main",
-            );
-        print("Error in adding person: $e");
-      }
+
+    if (gender == "Male") {
+      gender = "M";
+    } else {
+      gender = "F";
+    }
+
+    if (region == "Upper West") {
+      region = "UW";
+    } else if (region == "Upper East") {
+      region = "UE";
+    } else if (region == "North East") {
+      region = "NE";
+    } else if (region == "Savannah") {
+      region = "S";
+    } else if (region == "Northern") {
+      region = "N";
+    } else if (region == "Bono") {
+      region = "B";
+    } else if (region == "Bono East") {
+      region = "BE";
+    } else if (region == "Ahafo") {
+      region = "AH";
+    } else if (region == "Western North") {
+      region = "WN";
+    } else if (region == "Oti") {
+      region = "O";
+    } else if (region == "Ashanti") {
+      region = "AS";
+    } else if (region == "Eastern") {
+      region = "ES";
+    } else if (region == "Volta") {
+      region = "VL";
+    } else if (region == "Central") {
+      region = "CL";
+    } else if (region == "Western") {
+      region = "WS";
+    } else if (region == "Greater Accra") {
+      region = "GA";
+    }
+    try {
+      await PeopleAPI.addPerson(
+              new Person(
+                  fullName: fullName,
+                  gender: gender,
+                  age: age,
+                  nationality: nationality,
+                  ethnicity: ethnicity,
+                  religion: religion,
+                  locality: locality,
+                  region: region,
+                  enumerator: int.parse(userID)),
+          token)
+          .then((response) {
+        _showErrorAlert(
+          title: "Individual Added Successfully",
+          content: "You'll be redirected home",
+          path: "main",
+        );
+      });
+    } catch (e) {
+      _showErrorAlert(
+        title: e.toString(),
+        content: "Individual was not added",
+        path: "addcitizen",
+      );
+      String err = e.toString();
+      print("Error in adding person: $err");
     }
   }
-
 
   void _showErrorAlert({String title, String content, String path}) {
     showDialog(

@@ -8,9 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 String url = "https://web-census-api.herokuapp.com/api";
 
 class PeopleAPI {
-  static Future<http.Response> addPerson(Person person) async {
-    var prefs = await SharedPreferences.getInstance();
-    bool token = prefs.getBool("token");
+  static Future<http.Response> addPerson(Person person, String token) async {
     print(token);
     final response = await http.post('$url/people/',
         headers: {
@@ -18,7 +16,11 @@ class PeopleAPI {
           HttpHeaders.authorizationHeader: 'Token $token'
         },
         body: personToJson(person));
-    return response;
+    if (response.statusCode == 201) {
+      return response;
+    } else {
+      throw Exception('Failed to add person');
+    }
   }
 
   static Future<List<Person>> getPeople(String token) async {
@@ -39,7 +41,6 @@ class PeopleAPI {
       throw Exception('Failed to load people from API\n $mess');
     }
   }
-
 
   static Future<http.Response> deletePerson(int id) async {
     var prefs = await SharedPreferences.getInstance();

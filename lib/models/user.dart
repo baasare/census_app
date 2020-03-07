@@ -38,6 +38,6 @@ class User {
         "phone_number": phoneNumber,
         "full_name": fullName,
         "password": password,
-        "token": token,
+        "token": token == null ? null : token,
       };
 }

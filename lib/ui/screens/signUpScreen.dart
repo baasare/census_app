@@ -104,22 +104,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     Padding(
                       padding:
-                          EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0),
+                      EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0),
                       child: _nameField,
                     ),
                     Padding(
                       padding:
-                          EdgeInsets.only(top: 10.0, left: 15.0, right: 15.0),
+                      EdgeInsets.only(top: 10.0, left: 15.0, right: 15.0),
                       child: _phoneField,
                     ),
                     Padding(
                       padding:
-                          EdgeInsets.only(top: 10.0, left: 15.0, right: 15.0),
+                      EdgeInsets.only(top: 10.0, left: 15.0, right: 15.0),
                       child: _emailField,
                     ),
                     Padding(
                       padding:
-                          EdgeInsets.only(top: 10.0, left: 15.0, right: 15.0),
+                      EdgeInsets.only(top: 10.0, left: 15.0, right: 15.0),
                       child: _passwordField,
                     ),
                     Padding(
@@ -162,7 +162,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   duration: Duration(milliseconds: 400),
                   curve: Curves.ease,
                   child: Container(
-                    height: MediaQuery.of(context).size.height,
+                    height: MediaQuery
+                        .of(context)
+                        .size
+                        .height,
                     color: Colors.black54,
                   ),
                 ),
@@ -175,36 +178,37 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
 
-  void _signUp(
-      {String fullName,
-      String phoneNumber,
-      String email,
-      String password,
-      BuildContext context}) async {
+  void _signUp({String fullName,
+    String phoneNumber,
+    String email,
+    String password,
+    BuildContext context}) async {
     if (Validator.validateName(fullName) &&
         Validator.validateEmail(email) &&
         Validator.validateNumber(phoneNumber) &&
         Validator.validatePassword(password)) {
       try {
         await UserAPI.createUser(new User(
-                email: email,
-                phoneNumber: phoneNumber,
-                fullName: fullName,
-                password: password))
+            email: email,
+            phoneNumber: phoneNumber,
+            fullName: fullName,
+            password: password))
             .then((response) {
           _showErrorAlert(
-            title: "Registration Sucessful",
-            content: "You'll be directed to the login screem",
-            path: "signin"
+              title: "Registration Sucessful",
+              content: "You'll be directed to the login screem",
+              path: "signin"
           );
         });
       } catch (e) {
         _showErrorAlert(
-          title: e,
-          content: "Try Again",
+            title: e.toString(),
+            content: "Try Again",
+            path: "signup"
         );
 
-        print("Error in registration: $e");
+        String err = e.toString();
+        print("Error in adding person: $err");
       }
     }
   }
